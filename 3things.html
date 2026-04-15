@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#111113" media="(prefers-color-scheme: dark)" />
+<title>3 Things — a daily closure ritual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     3 Things — design tokens
+     System light/dark via prefers-color-scheme.
+     ========================================================= */
+  :root {
+    --bg: #faf9f6;
+    --bg-elev: #ffffff;
+    --fg: #1a1a1d;
+    --fg-soft: #55555c;
+    --fg-mute: #8a8a92;
+    --border: rgba(0, 0, 0, 0.07);
+    --border-strong: rgba(0, 0, 0, 0.12);
+    --accent: #4a7fb5;
+    --accent-warm: #e09b6a;
+    --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.04), 0 2px 8px rgba(20, 20, 30, 0.04);
+    --shadow-md: 0 4px 20px rgba(20, 20, 30, 0.06), 0 2px 6px rgba(20, 20, 30, 0.04);
+    --radius: 18px;
+    --radius-sm: 12px;
+    --space: 20px;
+
+    /* Day-of-week pastel palette (light mode) */
+    --c-mon: #dce8f4;
+    --c-tue: #d6ebe6;
+    --c-wed: #e5dff1;
+    --c-thu: #f6e4c8;
+    --c-fri: #f6dcd3;
+    --c-sat: #dfe8d9;
+    --c-sun: #f5f0e4;
+
+    --card-ink: #1a1a1d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111113;
+      --bg-elev: #1a1a1d;
+      --fg: #ececef;
+      --fg-soft: #b4b4ba;
+      --fg-mute: #7a7a82;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --accent: #7aa8d8;
+      --accent-warm: #e9ac7f;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+
+      --c-mon: #2a3846;
+      --c-tue: #273c3a;
+      --c-wed: #342e46;
+      --c-thu: #463b2a;
+      --c-fri: #452f2c;
+      --c-sat: #2f3c2b;
+      --c-sun: #3a3428;
+
+      --card-ink: #f3f3f5;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+    font-weight: 400;
+    color: var(--fg);
+    background: var(--bg);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Layout container */
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 22px 140px;
+    position: relative;
+  }
+
+  /* Header */
+  header.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+  }
+  .brand {
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--fg-soft);
+  }
+  .brand .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .nav-tabs {
+    display: inline-flex;
+    gap: 2px;
+    background: var(--bg-elev);
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  .nav-tabs button {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg-mute);
+    background: transparent;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color .2s ease, background .2s ease, transform .15s ease;
+    min-height: 32px;
+  }
+  .nav-tabs button:hover { color: var(--fg-soft); }
+  .nav-tabs button.active {
+    color: var(--fg);
+    background: var(--bg);
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-tabs button:active { transform: scale(0.98); }
+
+  /* Today view */
+  .today-date {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-mute);
+    margin-bottom: 6px;
+  }
+  .today-title {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0 0 28px;
+    color: var(--fg);
+  }
+
+  /* Memory prompt */
+  .memory-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    box-shadow: var(--shadow-sm);
+    animation: fadeSlideIn .6s ease both;
+  }
+  .memory-card .memory-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  .memory-card .memory-text {
+    font-size: 15px;
+    color: var(--fg);
+    line-height: 1.55;
+  }
+  .memory-card .memory-body { flex: 1; }
+  .memory-close {
+    background: transparent;
+    border: none;
+    color: var(--fg-mute);
+    cursor: pointer;
+    padding: 4px 8px;
+    font-size: 18px;
+    line-height: 1;
+    border-radius: 8px;
+    min-width: 32px; min-height: 32px;
+  }
+  .memory-close:hover { color: var(--fg); }
+
+  /* Recovery prompt */
+  .recovery-card {
+    background: var(--bg-elev);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    animation: fadeSlideIn .5s ease both;
+  }
+  .recovery-card p {
+    margin: 0 0 10px;
+    font-size: 15px;
+    color: var(--fg-soft);
+  }
+  .recovery-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-ghost {
+    font-family: inherit;
+    font-size: 14px;
+    background: transparent;
+    color: var(--fg-soft);
+    border: 1px solid var(--border-strong);
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    min-height: 44px;
+    transition: transform .15s ease, border-color .2s ease, color .2s ease;
+  }
+  .btn-ghost:hover { color: var(--fg); border-color: var(--fg-mute); }
+  .btn-ghost:active { transform: scale(0.98); }
+
+  /* Entry form */
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .field {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+    transition: transform .18s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .field:focus-within {
+    transform: scale(1.005);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(122, 168, 216, 0.14), var(--shadow-sm);
+  }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--fg-soft);
+    margin-bottom: 8px;
+    letter-spacing: -0.005em;
+  }
+  .field textarea {
+    display: block;
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 48px;
+    padding: 0;
+  }
+  .field textarea::placeholder {
+    color: var(--fg-mute);
+    opacity: 0.75;
+  }
+  .field[data-readonly="true"] {
+    opacity: 0.85;
+  }
+  .field[data-readonly="true"] textarea {
+    cursor: default;
+  }
+
+  /* Save row */
+  .save-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    background: var(--fg);
+    color: var(--bg);
+    border: none;
+    padding: 14px 26px;
+    border-radius: 999px;
+    cursor: pointer;
+    min-height: 48px;
+    letter-spacing: -0.005em;
+    transition: transform .12s ease, opacity .2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-primary:hover { opacity: 0.92; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .edit-timer {
+    font-size: 13px;
+    color: var(--fg-mute);
+    font-variant-numeric: tabular-nums;
+  }
+  .edit-timer .pulse {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-warm); margin-right: 6px; vertical-align: middle;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .first-line {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--fg-mute);
+    font-style: italic;
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .day-card {
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    background: var(--card-bg, var(--bg-elev));
+    color: var(--card-ink);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  .day-card.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .day-card .card-date {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .day-card .card-date .dow {
+    font-weight: 600;
+  }
+  .day-card .card-date .backfill-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    .day-card .card-date .backfill-tag { background: rgba(255,255,255,0.1); }
+  }
+  .day-card .entry-row + .entry-row { margin-top: 12px; }
+  .day-card .entry-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    opacity: 0.55;
+    margin-bottom: 3px;
+  }
+  .day-card .entry-text {
+    font-size: 15px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .day-card .entry-text.empty { opacity: 0.4; }
+
+  /* Day-of-week card colors */
+  .day-card[data-dow="0"] { background: var(--c-sun); }
+  .day-card[data-dow="1"] { background: var(--c-mon); }
+  .day-card[data-dow="2"] { background: var(--c-tue); }
+  .day-card[data-dow="3"] { background: var(--c-wed); }
+  .day-card[data-dow="4"] { background: var(--c-thu); }
+  .day-card[data-dow="5"] { background: var(--c-fri); }
+  .day-card[data-dow="6"] { background: var(--c-sat); }
+
+  /* Presence calendar */
+  .presence {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .presence h3 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg-soft);
+    letter-spacing: -0.005em;
+  }
+  .presence .presence-sub {
+    font-size: 12px;
+    color: var(--fg-mute);
+    margin-bottom: 14px;
+  }
+  .presence-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+    direction: ltr;
+  }
+  .presence-col {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .presence-dot {
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    background: var(--border);
+    transition: background .3s ease, transform .2s ease;
+  }
+  .presence-dot.filled {
+    background: var(--accent);
+  }
+  .presence-dot.future {
+    background: transparent;
+    border: 1px dashed var(--border);
+  }
+  .presence-dot:hover { transform: scale(1.12); }
+
+  /* Empty timeline */
+  .timeline-empty {
+    text-align: center;
+    color: var(--fg-mute);
+    padding: 48px 20px;
+    font-size: 15px;
+  }
+
+  /* Settings / export */
+  .settings {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .settings h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg-soft);
+    letter-spacing: -0.005em;
+  }
+  .settings .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .settings .row p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--fg-soft);
+    flex: 1;
+    min-width: 180px;
+  }
+  .soon-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--fg-mute);
+    border: 1px solid var(--border-strong);
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    margin-left: 8px;
+  }
+
+  /* Day Closed overlay */
+  .closed-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s ease;
+  }
+  .closed-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .closed-overlay .closed-text {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    transform: translateY(16px);
+    opacity: 0;
+    animation: riseFade 1.5s ease forwards;
+  }
+
+  /* Animations */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes riseFade {
+    0% { opacity: 0; transform: translateY(16px); }
+    35% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 1; transform: translateY(-10px); }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.5; }
+  }
+
+  /* View transitions */
+  .view {
+    animation: viewFade .35s ease both;
+  }
+  @keyframes viewFade {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    .app { padding: 22px 16px 120px; }
+    .today-title { font-size: 22px; }
+    .closed-overlay .closed-text { font-size: 28px; }
+    .nav-tabs button { padding: 7px 10px; font-size: 12px; }
+  }
+
+  /* Accessibility — focus rings */
+  button:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .field:focus-within textarea:focus-visible { outline: none; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="app-header">
+    <div class="brand"><span class="dot"></span>3 Things</div>
+    <nav class="nav-tabs" role="tablist" aria-label="Views">
+      <button data-view="today" class="active" role="tab">Today</button>
+      <button data-view="timeline" role="tab">Timeline</button>
+      <button data-view="settings" role="tab">Settings</button>
+    </nav>
+  </header>
+
+  <main id="view-root"></main>
+</div>
+
+<div class="closed-overlay" id="closedOverlay" aria-hidden="true">
+  <div class="closed-text">Day closed.</div>
+</div>
+
+<script>
+/* =============================================================
+   3 Things — app logic
+   Single-page app, localStorage-only, vanilla JS.
+   Structured so v2+ (cloud sync, PDF export, themes) can layer on
+   without rewrites: a pure `store` module + pure `render` functions.
+   ============================================================= */
+
+(() => {
+  'use strict';
+
+  // --------- Constants ---------
+  const STORAGE_KEY = '3things_data';
+  const EDIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+
+  // Rotating microcopy sets — rotation is monthly, not daily.
+  const MICROCOPY_SETS = [
+    {
+      wentWell:      { label: "What went well today?",         ph: "Something you did well, however small..." },
+      couldImprove:  { label: "What could have been better?",  ph: "One thing you'd approach differently..." },
+      tomorrow:      { label: "What will you do tomorrow?",    ph: "One specific intention for tomorrow..." },
+    },
+    {
+      wentWell:      { label: "What are you proud of today?",       ph: "A moment, however quiet, that felt like yours..." },
+      couldImprove:  { label: "What could have gone softer?",       ph: "A place you could have been kinder to yourself..." },
+      tomorrow:      { label: "What's one thing you commit to tomorrow?", ph: "A single promise — small is fine..." },
+    },
+    {
+      wentWell:      { label: "What was today's small win?",   ph: "Even one line. Even one word..." },
+      couldImprove:  { label: "Where did you get stuck?",      ph: "Noticing is enough. No need to fix it now..." },
+      tomorrow:      { label: "What does tomorrow need from you?", ph: "A single, gentle intention..." },
+    },
+  ];
+
+  // --------- Date helpers ---------
+  const pad = n => String(n).padStart(2, '0');
+  const todayKey = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  };
+  const keyFromDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const yesterdayKey = () => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return keyFromDate(d);
+  };
+  const parseKey = (k) => {
+    const [y, m, d] = k.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  const formatLongDate = (d) =>
+    d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  // --------- Store (pure-ish) ---------
+  const defaultData = () => ({
+    entries: {},
+    activeMicrocopySet: 0,
+    microcopyRotatedAt: todayKey(),
+    dismissedMemories: [],
+  });
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return defaultData();
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return defaultData();
+      return { ...defaultData(), ...parsed, entries: parsed.entries || {} };
+    } catch (e) {
+      console.warn('3things: failed to load; resetting', e);
+      return defaultData();
+    }
+  }
+  function save(data) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.warn('3things: failed to save', e);
+    }
+  }
+
+  function ensureMicrocopyRotation(data) {
+    // Rotate on 1st of each month. If month changed since last rotation, advance.
+    const last = data.microcopyRotatedAt ? parseKey(data.microcopyRotatedAt) : null;
+    const now = new Date();
+    if (!last
+        || last.getFullYear() !== now.getFullYear()
+        || last.getMonth()     !== now.getMonth()) {
+      data.activeMicrocopySet = (data.activeMicrocopySet + 1) % MICROCOPY_SETS.length;
+      data.microcopyRotatedAt = todayKey();
+      save(data);
+    }
+    return data;
+  }
+
+  function getDismissedMemories() {
+    return Array.isArray(state?.dismissedMemories) ? state.dismissedMemories : [];
+  }
+  function dismissMemoryFor(dateKey) {
+    if (!state.dismissedMemories) state.dismissedMemories = [];
+    if (!state.dismissedMemories.includes(dateKey)) {
+      state.dismissedMemories.push(dateKey);
+      save(state);
+    }
+  }
+
+  // --------- State ---------
+  let state = ensureMicrocopyRotation(load());
+  let currentView = 'today';
+  // `editingKey` tells the form which date it's writing to (today, or a backfill for yesterday)
+  let editingKey = todayKey();
+  let timerInterval = null;
+
+  // --------- Rendering ---------
+  const root = document.getElementById('view-root');
+
+  function render() {
+    // clear timers between renders
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    root.innerHTML = '';
+    root.className = 'view';
+    // force reflow so fade re-triggers
+    void root.offsetWidth;
+    root.className = 'view';
+
+    if (currentView === 'today')    renderToday();
+    else if (currentView === 'timeline') renderTimeline();
+    else if (currentView === 'settings') renderSettings();
+  }
+
+  // --------- Today view ---------
+  function renderToday() {
+    const copy = MICROCOPY_SETS[state.activeMicrocopySet];
+    const now = new Date();
+    const tKey = todayKey();
+    const yKey = yesterdayKey();
+
+    const wrap = document.createElement('section');
+    wrap.innerHTML = `
+      <div class="today-date">${formatLongDate(now)}</div>
+      <h1 class="today-title">Three things for today.</h1>
+      <div id="memorySlot"></div>
+      <div id="recoverySlot"></div>
+      <div class="form" id="entryForm"></div>
+    `;
+    root.appendChild(wrap);
+
+    // "On This Day" memory prompt (only for today, not when editing backfill)
+    if (editingKey === tKey) {
+      renderMemoryPrompt(tKey);
+      renderRecoveryPrompt(yKey);
+    }
+
+    const entry = state.entries[editingKey] || null;
+    const editable = isEditable(entry);
+
+    const form = document.getElementById('entryForm');
+    form.innerHTML = '';
+    form.appendChild(buildField('wentWell',     copy.wentWell,     entry, editable));
+    form.appendChild(buildField('couldImprove', copy.couldImprove, entry, editable));
+    form.appendChild(buildField('tomorrow',     copy.tomorrow,     entry, editable));
+
+    // Save / timer row
+    const saveRow = document.createElement('div');
+    saveRow.className = 'save-row';
+
+    const btn = document.createElement('button');
+    btn.className = 'btn-primary';
+    btn.type = 'button';
+    const isBackfillMode = editingKey !== tKey;
+    btn.textContent = entry
+      ? (editable ? 'Save changes' : 'Closed')
+      : (isBackfillMode ? 'Save reflection' : 'Close the day');
+    btn.disabled = entry && !editable;
+    btn.addEventListener('click', handleSave);
+    saveRow.appendChild(btn);
+
+    const timer = document.createElement('div');
+    timer.className = 'edit-timer';
+    timer.id = 'editTimer';
+    saveRow.appendChild(timer);
+
+    form.appendChild(saveRow);
+
+    // First-line prompt for very first visit
+    if (Object.keys(state.entries).length === 0) {
+      const p = document.createElement('p');
+      p.className = 'first-line';
+      p.textContent = 'Your journey starts with today.';
+      form.appendChild(p);
+    }
+
+    // Backfill banner
+    if (editingKey !== tKey) {
+      const banner = document.createElement('p');
+      banner.className = 'first-line';
+      banner.textContent = `Reflecting on ${formatLongDate(parseKey(editingKey))}`;
+      wrap.insertBefore(banner, document.getElementById('memorySlot').nextSibling);
+    }
+
+    // Keyboard: Cmd/Ctrl+Enter to save
+    form.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        e.preventDefault();
+        if (!btn.disabled) handleSave();
+      }
+    });
+
+    updateEditTimer();
+    if (entry && editable) {
+      timerInterval = setInterval(updateEditTimer, 1000);
+    }
+  }
+
+  function buildField(key, copy, entry, editable) {
+    const wrap = document.createElement('div');
+    wrap.className = 'field';
+    wrap.dataset.readonly = (entry && !editable) ? 'true' : 'false';
+    const id = `f_${key}`;
+    wrap.innerHTML = `
+      <label for="${id}">${copy.label}</label>
+      <textarea id="${id}" name="${key}" rows="2"
+                placeholder="${copy.ph}"
+                ${entry && !editable ? 'readonly' : ''}></textarea>
+    `;
+    const ta = wrap.querySelector('textarea');
+    if (entry) {
+      ta.value = entry[key] === '—' ? '' : (entry[key] || '');
+    }
+    // auto-resize
+    const autosize = () => {
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    };
+    ta.addEventListener('input', autosize);
+    requestAnimationFrame(autosize);
+    return wrap;
+  }
+
+  function isEditable(entry) {
+    if (!entry) return true;
+    if (!entry.editableUntil) return false;
+    return Date.now() < new Date(entry.editableUntil).getTime();
+  }
+
+  function updateEditTimer() {
+    const el = document.getElementById('editTimer');
+    if (!el) return;
+    const entry = state.entries[editingKey];
+    if (!entry) { el.textContent = ''; return; }
+    const ms = new Date(entry.editableUntil).getTime() - Date.now();
+    if (ms <= 0) {
+      el.textContent = '';
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      // Lock the form in-place — do NOT re-render, to avoid wiping
+      // whatever the user just typed. If they haven't saved by now,
+      // the intentional 10-minute safety net has simply elapsed.
+      document.querySelectorAll('#entryForm .field').forEach(f => {
+        f.dataset.readonly = 'true';
+        const ta = f.querySelector('textarea');
+        if (ta) ta.readOnly = true;
+      });
+      const btn = document.querySelector('#entryForm .btn-primary');
+      if (btn) { btn.disabled = true; btn.textContent = 'Closed'; }
+      return;
+    }
+    const m = Math.floor(ms / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    el.innerHTML = `<span class="pulse"></span>Editable for ${pad(m)}:${pad(s)}`;
+  }
+
+  function handleSave() {
+    const form = document.getElementById('entryForm');
+    if (!form) return;
+    const fd = {
+      wentWell:     form.querySelector('[name="wentWell"]').value.trim(),
+      couldImprove: form.querySelector('[name="couldImprove"]').value.trim(),
+      tomorrow:     form.querySelector('[name="tomorrow"]').value.trim(),
+    };
+
+    // If literally nothing is written, do nothing (avoid accidental empty close)
+    if (!fd.wentWell && !fd.couldImprove && !fd.tomorrow) {
+      // subtle shake instead of alert
+      const btn = form.querySelector('.btn-primary');
+      if (btn) {
+        btn.animate(
+          [{ transform: 'translateX(0)' }, { transform: 'translateX(-4px)' }, { transform: 'translateX(4px)' }, { transform: 'translateX(0)' }],
+          { duration: 260 }
+        );
+      }
+      return;
+    }
+
+    const now = new Date();
+    const existing = state.entries[editingKey];
+    const isNew = !existing;
+    const savedAt = isNew ? now.toISOString() : existing.savedAt;
+    const editableUntil = new Date(new Date(savedAt).getTime() + EDIT_WINDOW_MS).toISOString();
+
+    state.entries[editingKey] = {
+      wentWell:     fd.wentWell     || '—',
+      couldImprove: fd.couldImprove || '—',
+      tomorrow:     fd.tomorrow     || '—',
+      savedAt,
+      editableUntil,
+      isBackfill: existing?.isBackfill || (editingKey !== todayKey()),
+      // Snapshot the microcopy set used when writing, so the Timeline
+      // always shows the question the user actually answered — even
+      // after monthly rotation changes the active set.
+      microcopySet: existing?.microcopySet ?? state.activeMicrocopySet,
+    };
+    save(state);
+
+    if (isNew) {
+      try { if (navigator.vibrate) navigator.vibrate(200); } catch {}
+      playClosedRitual();
+    } else {
+      // Silent re-save while still editable
+      flashSaved();
+    }
+  }
+
+  function flashSaved() {
+    const btn = document.querySelector('.btn-primary');
+    if (!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = 'Saved';
+    setTimeout(() => { if (btn) btn.textContent = orig; }, 1100);
+  }
+
+  function playClosedRitual() {
+    const overlay = document.getElementById('closedOverlay');
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+    // reset inner animation
+    const txt = overlay.querySelector('.closed-text');
+    txt.style.animation = 'none';
+    void txt.offsetWidth;
+    txt.style.animation = '';
+    setTimeout(() => {
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+      editingKey = todayKey();
+      setView('timeline');
+    }, 1800);
+  }
+
+  // --------- Memory prompt ---------
+  function renderMemoryPrompt(forDateKey) {
+    const slot = document.getElementById('memorySlot');
+    if (!slot) return;
+    const dismissed = getDismissedMemories();
+    if (dismissed.includes(forDateKey)) return;
+
+    const d = parseKey(forDateKey);
+    const pastKey = `${d.getFullYear() - 1}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const past = state.entries[pastKey];
+    if (!past) return;
+    const text = past.wentWell && past.wentWell !== '—' ? past.wentWell : null;
+    if (!text) return;
+
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+    card.innerHTML = `
+      <div class="memory-body">
+        <div class="memory-label">A year ago, you wrote</div>
+        <div class="memory-text">${escapeHtml(text)}</div>
+      </div>
+      <button class="memory-close" aria-label="Dismiss">×</button>
+    `;
+    card.querySelector('.memory-close').addEventListener('click', () => {
+      dismissMemoryFor(forDateKey);
+      card.style.transition = 'opacity .3s ease, transform .3s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(-4px)';
+      setTimeout(() => card.remove(), 300);
+    });
+    slot.appendChild(card);
+  }
+
+  // --------- Missed-day recovery ---------
+  function renderRecoveryPrompt(yKey) {
+    const slot = document.getElementById('recoverySlot');
+    if (!slot) return;
+    // Only offer if yesterday has no entry AND user already has *some* history
+    if (state.entries[yKey]) return;
+    if (Object.keys(state.entries).length === 0) return;
+
+    const card = document.createElement('div');
+    card.className = 'recovery-card';
+    card.innerHTML = `
+      <p>Want to reflect on yesterday?</p>
+      <div class="recovery-actions">
+        <button class="btn-ghost" data-action="yes">Reflect on yesterday</button>
+        <button class="btn-ghost" data-action="no">Not today</button>
+      </div>
+    `;
+    card.querySelector('[data-action="yes"]').addEventListener('click', () => {
+      editingKey = yKey;
+      render();
+    });
+    card.querySelector('[data-action="no"]').addEventListener('click', () => {
+      card.style.transition = 'opacity .3s ease';
+      card.style.opacity = '0';
+      setTimeout(() => card.remove(), 300);
+    });
+    slot.appendChild(card);
+  }
+
+  // --------- Timeline view ---------
+  function renderTimeline() {
+    const wrap = document.createElement('section');
+    wrap.innerHTML = `
+      <div class="today-date">Your rhythm</div>
+      <h1 class="today-title">Timeline.</h1>
+      <div id="presence"></div>
+      <div class="timeline" id="timelineList"></div>
+    `;
+    root.appendChild(wrap);
+
+    renderPresence(document.getElementById('presence'));
+
+    const list = document.getElementById('timelineList');
+    const keys = Object.keys(state.entries).sort().reverse(); // newest first
+
+    if (keys.length === 0) {
+      list.innerHTML = `<div class="timeline-empty">No entries yet.<br/>When you close today, it will appear here.</div>`;
+      return;
+    }
+
+    for (const k of keys) {
+      list.appendChild(buildDayCard(k, state.entries[k]));
+    }
+
+    // Reveal cards on scroll
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add('in-view');
+          io.unobserve(e.target);
+        }
+      }
+    }, { threshold: 0.12 });
+    list.querySelectorAll('.day-card').forEach(c => io.observe(c));
+  }
+
+  function buildDayCard(key, entry) {
+    const d = parseKey(key);
+    const dow = d.getDay();
+    // Use the microcopy set active when the entry was written, so the
+    // labels always match the question the user actually answered.
+    const setIdx = (typeof entry.microcopySet === 'number'
+      ? entry.microcopySet
+      : state.activeMicrocopySet) % MICROCOPY_SETS.length;
+    const copy = MICROCOPY_SETS[setIdx];
+    const card = document.createElement('article');
+    card.className = 'day-card';
+    card.dataset.dow = String(dow);
+
+    const dowName = d.toLocaleDateString(undefined, { weekday: 'long' });
+    const long = d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+
+    card.innerHTML = `
+      <div class="card-date">
+        <span class="dow">${dowName}</span>
+        <span>· ${long}</span>
+        ${entry.isBackfill ? `<span class="backfill-tag">backfilled</span>` : ''}
+      </div>
+      ${renderEntryRow(copy.wentWell.label,     entry.wentWell)}
+      ${renderEntryRow(copy.couldImprove.label, entry.couldImprove)}
+      ${renderEntryRow(copy.tomorrow.label,     entry.tomorrow)}
+    `;
+    return card;
+  }
+
+  function renderEntryRow(label, value) {
+    const empty = !value || value === '—';
+    return `
+      <div class="entry-row">
+        <div class="entry-label">${escapeHtml(label)}</div>
+        <div class="entry-text ${empty ? 'empty' : ''}">${empty ? '—' : escapeHtml(value)}</div>
+      </div>
+    `;
+  }
+
+  // --------- Presence calendar ---------
+  function renderPresence(container) {
+    if (!container) return;
+    // 12 weeks x 7 days, ending today.
+    const totalDays = 12 * 7;
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    // Find the Sunday that starts the earliest visible week
+    const start = new Date(today);
+    start.setDate(today.getDate() - (totalDays - 1));
+    // Walk back to that week's Sunday
+    start.setDate(start.getDate() - start.getDay());
+
+    const weeks = [];
+    const cursor = new Date(start);
+    for (let w = 0; w < 13; w++) { // 13 to safely include current partial week
+      const col = [];
+      for (let d = 0; d < 7; d++) {
+        col.push(new Date(cursor));
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      weeks.push(col);
+    }
+    // Trim to last 12 columns
+    const visibleWeeks = weeks.slice(-12);
+
+    let html = `
+      <div class="presence">
+        <h3>Presence</h3>
+        <div class="presence-sub">12 weeks of quiet return.</div>
+        <div class="presence-grid">
+    `;
+    for (const col of visibleWeeks) {
+      html += `<div class="presence-col">`;
+      for (const day of col) {
+        const k = keyFromDate(day);
+        const isFuture = day > today;
+        const filled = !!state.entries[k];
+        const cls = isFuture ? 'future' : (filled ? 'filled' : '');
+        const title = day.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+        html += `<div class="presence-dot ${cls}" title="${title}${filled ? ' · ✓' : ''}"></div>`;
+      }
+      html += `</div>`;
+    }
+    html += `</div></div>`;
+    container.innerHTML = html;
+  }
+
+  // --------- Settings view ---------
+  function renderSettings() {
+    const wrap = document.createElement('section');
+    wrap.innerHTML = `
+      <div class="today-date">Yours, always</div>
+      <h1 class="today-title">Settings.</h1>
+      <div class="settings">
+        <h3>Your entries</h3>
+        <div class="row">
+          <p>Export everything you've written as a simple, readable text file. No lock-in.</p>
+          <button class="btn-ghost" id="exportBtn">Export my entries</button>
+        </div>
+        <div class="row">
+          <p>Save your progress across devices. <span class="soon-tag">Coming soon</span></p>
+          <button class="btn-ghost" disabled>Sign in</button>
+        </div>
+        <div class="row">
+          <p>Appearance follows your system theme — light or dark, automatically.</p>
+        </div>
+      </div>
+    `;
+    root.appendChild(wrap);
+    document.getElementById('exportBtn').addEventListener('click', exportEntries);
+  }
+
+  // --------- Export ---------
+  function exportEntries() {
+    const keys = Object.keys(state.entries).sort();
+    if (keys.length === 0) {
+      alert('Nothing to export yet.');
+      return;
+    }
+    const lines = [];
+    lines.push('3 Things — a daily closure ritual');
+    lines.push('Exported ' + new Date().toLocaleString());
+    lines.push('');
+    for (const k of keys) {
+      const e = state.entries[k];
+      const d = parseKey(k);
+      const setIdx = (typeof e.microcopySet === 'number'
+        ? e.microcopySet
+        : state.activeMicrocopySet) % MICROCOPY_SETS.length;
+      const copy = MICROCOPY_SETS[setIdx];
+      lines.push(formatLongDate(d) + (e.isBackfill ? '  (backfilled)' : ''));
+      lines.push('  ' + copy.wentWell.label);
+      lines.push('    ' + (e.wentWell || '—'));
+      lines.push('  ' + copy.couldImprove.label);
+      lines.push('    ' + (e.couldImprove || '—'));
+      lines.push('  ' + copy.tomorrow.label);
+      lines.push('    ' + (e.tomorrow || '—'));
+      lines.push('');
+    }
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `3things-export-${todayKey()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+  }
+
+  // --------- Utilities ---------
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // --------- View switching ---------
+  function setView(v) {
+    currentView = v;
+    document.querySelectorAll('.nav-tabs button').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === v);
+    });
+    // When returning to Today, always reset to today's key (not a stale backfill)
+    if (v === 'today') editingKey = todayKey();
+    render();
+  }
+  document.querySelectorAll('.nav-tabs button').forEach(b => {
+    b.addEventListener('click', () => setView(b.dataset.view));
+  });
+
+  // Re-check microcopy on tab focus (catches rotation at midnight / month change)
+  window.addEventListener('focus', () => {
+    state = ensureMicrocopyRotation(state);
+    // If day rolled over and user was editing "today", refresh the key
+    if (currentView === 'today') editingKey = todayKey();
+    render();
+  });
+
+  // Initial render
+  render();
+})();
+</script>
+</body>
+</html>
